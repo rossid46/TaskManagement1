@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Models;
 
-namespace TaskManagement.Controllers;
+namespace TaskManagement.Web.Areas.User.Controllers;
 
 public class HomeController : Controller
 {

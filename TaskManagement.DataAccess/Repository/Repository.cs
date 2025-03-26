@@ -19,15 +19,15 @@ namespace TaskManagement.DataAccess.Repository
             _db = db;
             this.dbSet = _db.Set<T>();
         }
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAll()
         {
             return await dbSet.ToListAsync();
         }
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetById(int id)
         {
             return await dbSet.FindAsync(id);
         }
-        public async Task AddAsync(T entity)
+        public async Task Add(T entity)
         {
             await dbSet.AddAsync(entity);
         }
@@ -35,9 +35,9 @@ namespace TaskManagement.DataAccess.Repository
         {
             dbSet.Update(entity);
         }
-        public async Task DeleteAsync(int id)
+        public async Task Delete(int id)
         {
-            var entity = await GetByIdAsync(id);
+            var entity = await GetById(id);
             if (entity != null)
             {
                 dbSet.Remove(entity);

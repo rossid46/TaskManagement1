@@ -8,10 +8,10 @@ namespace TaskManagement.DataAccess.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetByIdAsync(int id);
-        Task AddAsync(T entity);
+        Task<IEnumerable<T>> GetAll();
+        Task<T> GetById(int id);
+        Task Add(T entity);
         void Update(T entity);
-        Task DeleteAsync(int id);
+        Task Delete(int id);
     }
 }
