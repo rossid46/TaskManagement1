@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.Web", "TaskManagement\TaskManagement.Web.csproj", "{883C4030-E1E8-4834-A3A8-46EB9EAAAB1E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.Models", "TaskManagement.Models\TaskManagement.Models.csproj", "{2F9917B4-9F7A-467E-AACD-3200FEB3C1AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.DataAccess", "TaskManagement.DataAccess\TaskManagement.DataAccess.csproj", "{C0B1B817-ABFF-4FD8-8D08-122C4FC1E79A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.Utility", "TaskManagement.Utility\TaskManagement.Utility.csproj", "{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{C0B1B817-ABFF-4FD8-8D08-122C4FC1E79A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0B1B817-ABFF-4FD8-8D08-122C4FC1E79A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0B1B817-ABFF-4FD8-8D08-122C4FC1E79A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

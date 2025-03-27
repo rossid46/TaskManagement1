@@ -11,11 +11,11 @@ namespace TaskManagement.DataAccess.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _db;
-        public IUserTaskRepository UserTaskRepository { get; private set; }
+        public ITaskTDRepository TaskTDRepository { get; private set; }
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
-            UserTaskRepository = new UserTaskRepository(db);
+            TaskTDRepository = new TaskTDRepository(db);
         }
 
         public async Task<int> CompleteAsync()

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TaskManagement.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class addUserTaskToDb : Migration
+    public partial class addTaskTDToDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,7 @@ namespace TaskManagement.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserTasks",
+                name: "TaskTDs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -64,7 +64,7 @@ namespace TaskManagement.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserTasks", x => x.Id);
+                    table.PrimaryKey("PK_TaskTDs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -232,7 +232,7 @@ namespace TaskManagement.DataAccess.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "UserTasks");
+                name: "TaskTDs");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

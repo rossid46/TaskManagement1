@@ -220,7 +220,7 @@ namespace TaskManagement.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("TaskManagement.Models.UserTask", b =>
+            modelBuilder.Entity("TaskManagement.Models.TaskTD", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -247,7 +247,7 @@ namespace TaskManagement.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserTasks");
+                    b.ToTable("TaskTDs");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

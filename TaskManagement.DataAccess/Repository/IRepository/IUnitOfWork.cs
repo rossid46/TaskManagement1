@@ -8,7 +8,7 @@ namespace TaskManagement.DataAccess.Repository.IRepository
 {
     public interface IUnitOfWork : IDisposable
     {
-        IUserTaskRepository UserTaskRepository { get; }
+        ITaskTDRepository TaskTDRepository { get; }
         Task<int> CompleteAsync();
     }
 }
