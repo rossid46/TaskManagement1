@@ -9,8 +9,8 @@ using TaskManagement.Models;
 
 namespace TaskManagement.DataAccess.Repository
 {
-    public class TaskTDRepository : Repository<TaskItem>, ITaskTDRepository
+    public class TaskItemRepository : Repository<TaskItem>, ITaskItemRepository
     {
-        public TaskTDRepository(ApplicationDbContext context) : base(context) { }
+        public TaskItemRepository(ApplicationDbContext context) : base(context) { }
     }
 }

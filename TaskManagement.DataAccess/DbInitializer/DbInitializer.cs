@@ -54,9 +54,9 @@ namespace TaskManagement.DataAccess.DbInitializer
                 //if roles are not created, then we will create admin user as well
                 _userManager.CreateAsync(new ApplicationUser
                 {
+                    Name = "Davide Rossi",
                     UserName = "admin@gmail.com",
                     Email = "admin@gmail.com",
-                    Name = "Davide Rossi",
                     PhoneNumber = "1112223333",
                 }, "Foggia123!").GetAwaiter().GetResult();
 

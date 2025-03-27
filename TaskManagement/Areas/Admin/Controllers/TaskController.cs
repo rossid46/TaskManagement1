@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
+using TaskManagement.Utility;
 
 namespace TaskManagement.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class TaskController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -12,9 +15,9 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var tasks = await _unitOfWork.TaskTDRepository.GetAll();
+            var tasks = _unitOfWork.TaskItem.GetAll(null,includeProperties:"Comments");
             return View(tasks);
         }
         public IActionResult Create()
@@ -24,19 +27,19 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TaskItem task)
+        public IActionResult Create(TaskItem task)
         {
             if (ModelState.IsValid)
             {
-                await _unitOfWork.TaskTDRepository.Add(task);
-                await _unitOfWork.CompleteAsync();
+                _unitOfWork.TaskItem.Add(task);
+                _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
             return View(task);
         }
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
-            var task = await _unitOfWork.TaskTDRepository.GetById(id);
+            var task = _unitOfWork.TaskItem.Get(t => t.Id == id);
             if (task == null)
             {
                 return NotFound();
@@ -46,7 +49,7 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, TaskItem task)
+        public  IActionResult Edit(int id, TaskItem task)
         {
             if (id != task.Id)
             {
@@ -54,15 +57,15 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
             }
             if (ModelState.IsValid)
             {
-                _unitOfWork.TaskTDRepository.Update(task);
-                await _unitOfWork.CompleteAsync();
+                _unitOfWork.TaskItem.Update(task);
+                _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
             return View(task);
         }
         public async Task<IActionResult> Delete(int id)
         {
-            var task = await _unitOfWork.TaskTDRepository.GetById(id);
+            var task = _unitOfWork.TaskItem.Get(t => t.Id == id);
             if (task == null)
             {
                 return NotFound();
@@ -72,24 +75,29 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            await _unitOfWork.TaskTDRepository.Delete(id);
-            await _unitOfWork.CompleteAsync();
+            var task = _unitOfWork.TaskItem.Get(t => t.Id == id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+            _unitOfWork.TaskItem.Remove(task);
+            _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Assign(int taskId, int userId)
+        public IActionResult Assign(int taskId, int userId)
         {
-            var task = await _unitOfWork.TaskTDRepository.GetById(taskId);
+            var task = _unitOfWork.TaskItem.Get(t => t.Id == taskId);
             if (task == null)
             {
                 return NotFound();
             }
 
             task.AssignedToUserId = userId;
-            _unitOfWork.TaskTDRepository.Update(task);
-            await _unitOfWork.CompleteAsync();
+            _unitOfWork.TaskItem.Update(task);
+            _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
         }

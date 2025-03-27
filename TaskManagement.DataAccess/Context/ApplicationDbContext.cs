@@ -14,7 +14,7 @@ namespace TaskManagement.DataAccess.Context
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        public DbSet<TaskItem> TaskTDs { get; set; }
+        public DbSet<TaskItem> TaskItems { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     }
 }

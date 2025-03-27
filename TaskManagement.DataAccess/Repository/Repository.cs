@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManagement.DataAccess.Context;
@@ -19,29 +20,58 @@ namespace TaskManagement.DataAccess.Repository
             _db = db;
             this.dbSet = _db.Set<T>();
         }
-        public async Task<IEnumerable<T>> GetAll()
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null)
         {
-            return await dbSet.ToListAsync();
+            IQueryable<T> query = dbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.ToList();
         }
-        public async Task<T> GetById(int id)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            return await dbSet.FindAsync(id);
+            IQueryable<T> query;
+            if (tracked)
+            {
+                query = dbSet;
+            }
+            else
+            {
+                query = dbSet.AsNoTracking();
+            }
+
+            query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.FirstOrDefault();
+
         }
-        public async Task Add(T entity)
+        public void Add(T entity)
         {
-            await dbSet.AddAsync(entity);
+            dbSet.Add(entity);
         }
         public void Update(T entity)
         {
             dbSet.Update(entity);
         }
-        public async Task Delete(int id)
+        public void Remove(T entity)
         {
-            var entity = await GetById(id);
-            if (entity != null)
-            {
-                dbSet.Remove(entity);
-            }
+            dbSet.Remove(entity);
         }
     }
 }

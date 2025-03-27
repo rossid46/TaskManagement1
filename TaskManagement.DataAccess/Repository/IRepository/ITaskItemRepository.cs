@@ -7,7 +7,7 @@ using TaskManagement.Models;
 
 namespace TaskManagement.DataAccess.Repository.IRepository
 {
-    public interface ITaskTDRepository : IRepository<TaskItem>
+    public interface ITaskItemRepository : IRepository<TaskItem>
     {
     }
 }

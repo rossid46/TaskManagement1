@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace TaskManagement.DataAccess.Repository.IRepository
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork 
     {
-        ITaskTDRepository TaskTDRepository { get; }
-        Task<int> CompleteAsync();
+        ITaskItemRepository TaskItem { get; }
+        void Save();
     }
 }

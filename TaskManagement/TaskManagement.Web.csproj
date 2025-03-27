@@ -24,9 +24,4 @@
     <ProjectReference Include="..\TaskManagement.DataAccess\TaskManagement.DataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Views\" />
-    <Folder Include="Areas\User\Views\" />
-  </ItemGroup>
-
 </Project>

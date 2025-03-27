@@ -10,18 +10,17 @@ namespace TaskManagement.DataAccess.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly ApplicationDbContext _db;
-        public ITaskTDRepository TaskTDRepository { get; private set; }
+        private ApplicationDbContext _db;
+        public ITaskItemRepository TaskItem { get; private set; }
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
-            TaskTDRepository = new TaskTDRepository(db);
+            TaskItem = new TaskItemRepository(_db);
         }
 
-        public async Task<int> CompleteAsync()
-        { return await _db.SaveChangesAsync(); }
-
-        public void Dispose()
-            { _db.Dispose();  }
+        public void Save()
+        {
+            _db.SaveChanges();
+        }
     }
 }
