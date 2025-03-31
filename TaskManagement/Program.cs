@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.DataAccess.Context;
 using TaskManagement.DataAccess.DbInitializer;
 using TaskManagement.DataAccess.Repository;
 using TaskManagement.DataAccess.Repository.IRepository;
+using TaskManagement.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +28,16 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 } );
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = $"/Identity/Account/Login";
+    options.LogoutPath = $"/Identity/Account/Logout";
+    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+});
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 void SeedDatabase()
@@ -56,6 +66,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 //app.UseSession();
 SeedDatabase();
+app.MapRazorPages();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=User}/{controller=Home}/{action=Index}/{id?}");

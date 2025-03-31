@@ -1,0 +1,83 @@
+﻿@model TaskItemVM
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white"> @(Model.TaskItem.Id != 0 ? "Update" : "Create") Task</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="TaskItem.Id" hidden />
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">
+                        <div class="form-floating py-2 col-12">
+                            <input asp-for="TaskItem.Title" class="form-control border-0 shadow" />
+                            <label asp-for="TaskItem.Title" class="ms-2"></label>
+                            <span asp-validation-for="TaskItem.Title" class="text-danger"></span>
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="TaskItem.Description" class="ms-2 text-muted"></label>
+                            <textarea asp-for="TaskItem.Description" class="form-control border-0 shadow"></textarea>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="TaskItem.ApplicationUserId" asp-items="@Model.UserList" class="form-select border-0 shadow">
+                                <option disabled selected>--Select User--</option>
+                            </select>
+                            <label asp-for="TaskItem.ApplicationUserId" class="ms-2"></label>
+                            <span asp-validation-for="TaskItem.ApplicationUserId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                @if (Model.TaskItem.Id != 0)
+                                {
+                                        <button type="submit" class="btn btn-success form-control">Update</button>
+                                }
+                                else
+                                {
+                                        <button type="submit" class="btn btn-primary form-control">Create</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Task" asp-action="Index" class="btn btn-outline-outline-primary border form-control">
+                                    Back to List
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+                    <script>
+                        tinymce.init({
+                          selector: 'textarea',
+                          plugins: [
+                            'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'table', 'visualblocks', 'wordcount',
+                            'checklist', 'mediaembed', 'casechange', 'export', 'formatpainter', 'pageembed',
+                            'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'mentions', 'tableofcontents',
+                            'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+                          ],
+                          toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | align lineheight | checklist numlist bullist indent outdent ',
+
+                          mergetags_list: [
+                            { value: 'First.Name', title: 'First Name' },
+                            { value: 'Email', title: 'Email' },
+                          ],
+                        });
+                    </script>
+    @{
+                            <partial name="_ValidationScriptsPartial" />
+    }
+        }
+

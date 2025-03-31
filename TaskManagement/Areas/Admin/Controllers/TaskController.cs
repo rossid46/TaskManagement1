@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
+using TaskManagement.Models.ViewModels;
 using TaskManagement.Utility;
 
 namespace TaskManagement.Web.Areas.Admin.Controllers
@@ -17,51 +19,63 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            var tasks = _unitOfWork.TaskItem.GetAll(null,includeProperties:"Comments");
-            return View(tasks);
+            List<TaskItem> taskList = _unitOfWork.TaskItem.GetAll(includeProperties:"Comments").ToList();
+            return View(taskList);
         }
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
-            return View();
+            TaskItemVM taskItemVM = new()
+            {
+                UserList = _unitOfWork.ApplicationUser.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                }),
+                TaskItem = new TaskItem()
+                {
+                    Status = "ToDo"
+                }
+            };
+            if(id==null || id==0)
+            {
+                //create
+                return View(taskItemVM);
+            }
+            else
+            {
+                //update
+                taskItemVM.TaskItem = _unitOfWork.TaskItem.Get(u=>u.Id == id);
+                return View(taskItemVM);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(TaskItem task)
+        public IActionResult Upsert(TaskItemVM taskItemVM)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.TaskItem.Add(task);
+                if (taskItemVM.TaskItem.Id == 0)
+                {
+                    _unitOfWork.TaskItem.Add(taskItemVM.TaskItem);
+                }
+                else
+                {
+                    _unitOfWork.TaskItem.Update(taskItemVM.TaskItem);
+                }
                 _unitOfWork.Save();
-                return RedirectToAction(nameof(Index));
+                TempData["success"] = "Task created/updated successfully";
+                return RedirectToAction("Index");
             }
-            return View(task);
-        }
-        public IActionResult Edit(int id)
-        {
-            var task = _unitOfWork.TaskItem.Get(t => t.Id == id);
-            if (task == null)
+            else
             {
-                return NotFound();
+                //taskItemVM.UserList = _unitOfWork.TaskItem.GetAll().Select(u => new SelectListItem
+                //{
+                //    Text = u.Title,
+                //    Value = u.Id.ToString()
+                //});
+                return View(taskItemVM);
             }
-            return View(task);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public  IActionResult Edit(int id, TaskItem task)
-        {
-            if (id != task.Id)
-            {
-                return BadRequest();
-            }
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.TaskItem.Update(task);
-                _unitOfWork.Save();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(task);
         }
         public async Task<IActionResult> Delete(int id)
         {
@@ -86,22 +100,6 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
-
-        public IActionResult Assign(int taskId, int userId)
-        {
-            var task = _unitOfWork.TaskItem.Get(t => t.Id == taskId);
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            task.AssignedToUserId = userId;
-            _unitOfWork.TaskItem.Update(task);
-            _unitOfWork.Save();
-
-            return RedirectToAction(nameof(Index));
-        }
-
 
     }
 }

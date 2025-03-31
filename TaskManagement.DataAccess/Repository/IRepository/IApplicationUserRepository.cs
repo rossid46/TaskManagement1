@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManagement.Models;
 
 namespace TaskManagement.DataAccess.Repository.IRepository
 {
-    public interface IUnitOfWork 
+    public interface IApplicationUserRepository : IRepository<ApplicationUser>
     {
-        ITaskItemRepository TaskItem { get; }
-        IApplicationUserRepository ApplicationUser { get; }
-        void Save();
+        void Update(ApplicationUser applicationUser);
     }
 }

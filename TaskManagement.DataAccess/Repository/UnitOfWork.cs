@@ -12,10 +12,13 @@ namespace TaskManagement.DataAccess.Repository
     {
         private ApplicationDbContext _db;
         public ITaskItemRepository TaskItem { get; private set; }
+        public IApplicationUserRepository ApplicationUser { get; private set; }
+
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
             TaskItem = new TaskItemRepository(_db);
+            ApplicationUser = new ApplicationUserRepository(_db);
         }
 
         public void Save()
