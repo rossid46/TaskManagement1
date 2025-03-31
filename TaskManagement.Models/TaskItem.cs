@@ -14,6 +14,7 @@ namespace TaskManagement.Models
         public DateTime? DueDate { get; set; }
         public string Description { get; set; }
         public int AssignedToUserId { get; set; }
+        [ValidateNever]
         public List<Comment> Comments { get; set; }
         public string? ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]

@@ -14,5 +14,7 @@ namespace TaskManagement.Models.ViewModels
         public TaskItem TaskItem { get; set; }
         [ValidateNever]
         public IEnumerable<SelectListItem> UserList { get; set; }
+        [ValidateNever]
+        public IEnumerable<SelectListItem> PriorityList { get; set; }
     }
 }

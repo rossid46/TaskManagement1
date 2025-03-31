@@ -1,7 +1,4 @@
-﻿@using TaskManagement.Models
-@model IEnumerable<TaskItem>
-
-<table class="table">
+﻿<table class="table">
     <thead>
         <tr>
             <th>Title</th>
@@ -16,11 +13,11 @@
             <tr>
                 <td>@task.Title</td>
                 <td>@task.Status</td>
-                <td>@task.AssignedToUserId</td>
+                <td>@task.ApplicationUser.Name</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-primary">Edit</a>
-                    <a asp-action="Assign" asp-route-id="@task.Id" class="btn btn-secondary">Assign</a>
-                    <a asp-action="Delete" asp-route-id="@task.Id" class="btn btn-danger">Delete</a>
+                    <a asp-area="User" asp-controller="Task" asp-action="UpdateStatus" asp-route-id="@task.Id" class="btn btn-primary mx-2">
+                        <i class="bi bi-pencil"></i> Update Status
+                    </a>
                 </td>
             </tr>
         }

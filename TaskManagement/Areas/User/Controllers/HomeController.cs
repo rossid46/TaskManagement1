@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
+using TaskManagement.Models.ViewModels;
 
 namespace TaskManagement.Web.Areas.User.Controllers;
 [Area("User")]
@@ -18,9 +20,18 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        IEnumerable<TaskItem> tasks = _unitOfWork.TaskItem.GetAll(filter: null, includeProperties: "Comments");
-        return View(tasks);
+
+        if (User.Identity.IsAuthenticated)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            List<TaskItem> taskList = _unitOfWork.TaskItem.GetAll(includeProperties: "Comments,ApplicationUser").ToList();
+            return View(taskList);
+        }
+        return Redirect("identity/account/login");
     }
+
 
     public IActionResult Privacy()
     {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TaskManagement.DataAccess.Repository.IRepository;
@@ -19,7 +20,7 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            List<TaskItem> taskList = _unitOfWork.TaskItem.GetAll(includeProperties:"Comments").ToList();
+            List<TaskItem> taskList = _unitOfWork.TaskItem.GetAll(includeProperties:"Comments,ApplicationUser").ToList();
             return View(taskList);
         }
         public IActionResult Upsert(int? id)
@@ -31,10 +32,7 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
                     Text = u.Name,
                     Value = u.Id.ToString()
                 }),
-                TaskItem = new TaskItem()
-                {
-                    Status = "ToDo"
-                }
+                TaskItem = new TaskItem() { }
             };
             if(id==null || id==0)
             {
@@ -101,5 +99,29 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<TaskItem> objTaskList = _unitOfWork.TaskItem.GetAll(includeProperties: "ApplicationUser").ToList();
+            return Json(new { data = objTaskList });
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var taskToBeDeleted = _unitOfWork.TaskItem.Get(u => u.Id == id);
+            if (taskToBeDeleted == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+            
+            _unitOfWork.TaskItem.Remove(taskToBeDeleted);
+            _unitOfWork.Save();
+
+            return Json(new { success = true, message = "Delete Successful" });
+        }
+
+        #endregion
     }
 }

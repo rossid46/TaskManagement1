@@ -54,8 +54,13 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
 
             ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == roleManagmentVM.ApplicationUser.Id);
 
+            _unitOfWork.ApplicationUser.Update(applicationUser);
+            _unitOfWork.Save();
 
-                    return RedirectToAction("Index");
+            _userManager.RemoveFromRoleAsync(applicationUser, oldRole).GetAwaiter().GetResult();
+            _userManager.AddToRoleAsync(applicationUser, roleManagmentVM.ApplicationUser.Role).GetAwaiter().GetResult();
+
+            return RedirectToAction("Index");
         }
 
 

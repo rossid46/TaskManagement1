@@ -1,0 +1,53 @@
+﻿@model TaskItemVM
+
+<div class="card shadow border-0 my-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white">Update Task</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <form method="post" class="row" enctype="multipart/form-data">
+            <input asp-for="TaskItem.Id" hidden />
+            <div class="row">
+                <div class="col-10">
+                    <div class="border p-3">
+                        <div class="form-floating py-2 col-12">
+                            <input disabled asp-for="TaskItem.Title" class="form-control border-0 shadow" />
+                            <label asp-for="TaskItem.Title" class="ms-2"></label>
+                            <span asp-validation-for="TaskItem.Title" class="text-danger"></span>
+                        </div>
+                        <div class="py-2 col-12">
+                            <label asp-for="TaskItem.Description" class="ms-2 text-muted"></label>
+                            <textarea disabled asp-for="TaskItem.Description" class="form-control border-0 shadow"></textarea>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="TaskItem.Status" class="form-select border-0 shadow">
+                                <option value="ToDo">To Do</option>
+                                <option value="InProgress">In Progress</option>
+                                <option value="Done">Done</option>
+                            </select>
+                            <label asp-for="TaskItem.Status" class="ms-2"></label>
+                            <span asp-validation-for="TaskItem.Status" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="row pt-2">
+                            <div class="col-6 col-md-3">
+                                    <button type="submit" class="btn btn-success form-control">Update</button>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-area="User" asp-controller="Home" asp-action="Index" class="btn btn-outline-outline-primary border form-control">
+                                    Back to List
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>

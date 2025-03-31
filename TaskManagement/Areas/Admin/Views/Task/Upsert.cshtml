@@ -25,11 +25,31 @@
                         </div>
                         <div class="form-floating py-2 col-12">
                             <select asp-for="TaskItem.ApplicationUserId" asp-items="@Model.UserList" class="form-select border-0 shadow">
-                                <option disabled selected>--Select User--</option>
+                                <option>--Select User--</option>
                             </select>
                             <label asp-for="TaskItem.ApplicationUserId" class="ms-2"></label>
                             <span asp-validation-for="TaskItem.ApplicationUserId" class="text-danger"></span>
                         </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="TaskItem.Priority" class="form-select border-0 shadow">
+                                <option>--Select Priority--</option>
+                                <option>Low</option>
+                                <option>Medium</option>
+                                <option>High</option>
+                            </select>
+                            <label asp-for="TaskItem.Priority" class="ms-2"></label>
+                            <span asp-validation-for="TaskItem.Priority" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-2 col-12">
+                            <select asp-for="TaskItem.Status" class="form-select border-0 shadow">
+                                <option value="ToDo">To Do</option>
+                                <option value="InProgress">In Progress</option>
+                                <option value="Done">Done</option>
+                            </select>
+                            <label asp-for="TaskItem.Status" class="ms-2"></label>
+                            <span asp-validation-for="TaskItem.Status" class="text-danger"></span>
+                        </div>
+
 
                         <div class="row pt-2">
                             <div class="col-6 col-md-3">
