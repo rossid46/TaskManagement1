@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
 using TaskManagement.Models.ViewModels;
+using TaskManagement.Utility;
 
 namespace TaskManagement.Web.Areas.User.Controllers
 {
     [Area("User")]
+    [Authorize(Roles= SD.Role_User)]
     public class TaskController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -19,6 +22,8 @@ namespace TaskManagement.Web.Areas.User.Controllers
             if(id==0 || id==null)
                 return NotFound();
 
+            TaskItem taskItem = _unitOfWork.TaskItem.Get(u => u.Id == id);
+
             TaskItemVM taskItemVM = new()
             {
                 UserList = _unitOfWork.ApplicationUser.GetAll().Select(u => new SelectListItem
@@ -26,7 +31,7 @@ namespace TaskManagement.Web.Areas.User.Controllers
                     Text = u.Name,
                     Value = u.Id.ToString()
                 }),
-                TaskItem = new TaskItem() { }
+                TaskItem = taskItem
             };
             if (taskItemVM==null)
                 return NotFound();

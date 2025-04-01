@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using TaskManagement.Api.Settings;
 using TaskManagement.DataAccess.Context;
 using TaskManagement.DataAccess.DbInitializer;
 using TaskManagement.DataAccess.Repository;
@@ -38,6 +42,34 @@ builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.Configure<AppJWTSettings>(builder.Configuration.GetSection("AppJWTSettings"));
+
+
+var key = Encoding.UTF8.GetBytes("supersecret_key_supersecret_key_supersecret_key");
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    var settings = builder.Configuration.Get<AppJWTSettings>()!;
+    string issuer = settings.Issuer;
+    string audience = settings.Audience;
+    string secretKey = settings.SecretKey;
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true
+    };
+});
+
 
 var app = builder.Build();
 void SeedDatabase()
@@ -64,6 +96,13 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+#if DEBUG
+    app.UseCors(options =>
+    options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
+    );
+#endif
+
 //app.UseSession();
 SeedDatabase();
 app.MapRazorPages();

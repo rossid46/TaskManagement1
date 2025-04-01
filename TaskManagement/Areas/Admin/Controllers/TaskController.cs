@@ -20,6 +20,7 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
+
             List<TaskItem> taskList = _unitOfWork.TaskItem.GetAll(includeProperties:"Comments,ApplicationUser").ToList();
             return View(taskList);
         }
