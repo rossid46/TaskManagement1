@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TaskManagement.Api.Settings
 {
-        public class AppJWTSettings
+        public class AppJwtSettings
         {
             public string Issuer { get; set; }
             public string Audience { get; set; }

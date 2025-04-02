@@ -11,7 +11,8 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace TaskManagement.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin,AuthenticationSchemes = "Identity.Application")]
+
     public class UserController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;

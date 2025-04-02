@@ -9,7 +9,7 @@ using TaskManagement.Utility;
 namespace TaskManagement.Web.Areas.User.Controllers
 {
     [Area("User")]
-    [Authorize(Roles= SD.Role_User)]
+    [Authorize(Roles= SD.Role_User, AuthenticationSchemes = "Identity.Application")]
     public class TaskController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

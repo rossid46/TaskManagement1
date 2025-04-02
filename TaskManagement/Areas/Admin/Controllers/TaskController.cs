@@ -10,7 +10,7 @@ using TaskManagement.Utility;
 namespace TaskManagement.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin)]
+    [Authorize(Roles = SD.Role_Admin, AuthenticationSchemes = "Identity.Application")]
     public class TaskController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

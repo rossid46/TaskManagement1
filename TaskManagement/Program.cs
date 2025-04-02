@@ -13,8 +13,43 @@ using TaskManagement.Utility;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.Configure<AppJwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
 // Add services to the container.
+builder.Services.AddAuthorization();
+
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+//builder.Services.AddTransient<GlobalErrorHandlerMiddleware>();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = builder.Configuration["JwtSettings:Issuer"]!,
+        ValidAudience = builder.Configuration["JwtSettings:Audience"]!,
+        IssuerSigningKey = new SymmetricSecurityKey
+            (Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true
+    };
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -25,50 +60,18 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(100);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-} );
+
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = $"/Identity/Account/Login";
     options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
-builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-builder.Services.AddRazorPages();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.Configure<AppJWTSettings>(builder.Configuration.GetSection("AppJWTSettings"));
 
 
-var key = Encoding.UTF8.GetBytes("supersecret_key_supersecret_key_supersecret_key");
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    var settings = builder.Configuration.Get<AppJWTSettings>()!;
-    string issuer = settings.Issuer;
-    string audience = settings.Audience;
-    string secretKey = settings.SecretKey;
 
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = issuer,
-        ValidAudience = audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true
-    };
-});
+
 
 
 var app = builder.Build();
@@ -91,20 +94,20 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-#if DEBUG
-    app.UseCors(options =>
-    options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
-    );
-#endif
+//#if DEBUG
+//    app.UseCors(options =>
+//    options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
+//    );
+//#endif
 
-//app.UseSession();
-SeedDatabase();
+app.UseSession();
+//app.UseMiddleware<GlobalErrorHandlerMiddleware>();
+//SeedDatabase();
 app.MapRazorPages();
 
 app.MapControllerRoute(
