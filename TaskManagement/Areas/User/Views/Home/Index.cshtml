@@ -5,6 +5,7 @@
             <th>Status</th>
             <th>Assigned To</th>
             <th>Priority</th>
+            <th>Due Date</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -16,6 +17,7 @@
                 <td>@task.Status</td>
                 <td>@task.ApplicationUser.Name</td>
                 <td>@task.Priority</td>
+                <td>@task.DueDate</td>
                 <td>
                     <a asp-area="User" asp-controller="Task" asp-action="UpdateStatus" asp-route-id="@task.Id" class="btn btn-primary mx-2">
                         <i class="bi bi-pencil"></i> Update Status
