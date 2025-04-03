@@ -1,15 +1,20 @@
+using FluentValidation.AspNetCore;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using TaskManagement.Api.Models;
 using TaskManagement.Api.Settings;
 using TaskManagement.DataAccess.Context;
 using TaskManagement.DataAccess.DbInitializer;
 using TaskManagement.DataAccess.Repository;
 using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Utility;
+using System.Reflection;
+using TaskManagement.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +25,14 @@ builder.Services.Configure<AppJwtSettings>(builder.Configuration.GetSection("Jwt
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllersWithViews();
+//builder.Services.AddControllers().AddFluentValidation(v =>
+//{
+//    v.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+//});
+builder.Services.AddScoped<IValidator<AuthJwtRegistration>, AuthJwtRegistrationValidator>();
+//builder.Services.AddValidatorsFromAssemblyContaining<AuthJwtRegistrationValidator>();
+
+builder.Services.AddCors();
 builder.Services.AddRazorPages();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -30,7 +43,9 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-//builder.Services.AddTransient<GlobalErrorHandlerMiddleware>();
+builder.Services.AddTransient<ExceptionMiddleware>();
+builder.Services.AddLogging();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -74,7 +89,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 
-var app = builder.Build();
+ var app = builder.Build();
 void SeedDatabase()
 {
     using (var scope = app.Services.CreateScope())
@@ -91,6 +106,12 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+//else
+//{
+//    app.UseDeveloperExceptionPage();
+//}
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -99,14 +120,13 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//#if DEBUG
-//    app.UseCors(options =>
-//    options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
-//    );
-//#endif
+#if DEBUG
+    app.UseCors(options =>
+    options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
+    );
+#endif
 
 app.UseSession();
-//app.UseMiddleware<GlobalErrorHandlerMiddleware>();
 //SeedDatabase();
 app.MapRazorPages();
 

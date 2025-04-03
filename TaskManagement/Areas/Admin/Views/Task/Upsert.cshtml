@@ -1,6 +1,6 @@
 ﻿@model TaskItemVM
 
-<div class="card shadow border-0 my-4">
+<div class="card shadow col d-flex justify-content-center">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
@@ -12,7 +12,7 @@
         <form method="post" class="row" enctype="multipart/form-data">
             <input asp-for="TaskItem.Id" hidden />
             <div class="row">
-                <div class="col-10">
+                <div class="col-12">
                     <div class="border p-3">
                         <div class="form-floating py-2 col-12">
                             <input asp-for="TaskItem.Title" class="form-control border-0 shadow" />
@@ -23,39 +23,44 @@
                             <label asp-for="TaskItem.Description" class="ms-2 text-muted"></label>
                             <textarea asp-for="TaskItem.Description" class="form-control border-0 shadow"></textarea>
                         </div>
-                        <div class="form-floating py-2 col-4">
-                            <select asp-for="TaskItem.ApplicationUserId" asp-items="@Model.UserList" class="form-select border-0 shadow">
-                                <option>--Select User--</option>
-                            </select>
-                            <label asp-for="TaskItem.ApplicationUserId" class="ms-2"></label>
-                            <span asp-validation-for="TaskItem.ApplicationUserId" class="text-danger"></span>
+                        <div class="row">
+                            <div class="form-floating py-2 col-6">
+                                <select asp-for="TaskItem.ApplicationUserId" asp-items="@Model.UserList" class="form-select border-0 shadow">
+                                    <option>--Select User--</option>
+                                </select>
+                                <label class="ms-2">Assign to</label>
+                                <span asp-validation-for="TaskItem.ApplicationUserId" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating py-2 col-6">
+                                <select asp-for="TaskItem.Priority" class="form-select border-0 shadow">
+                                    <option>Low</option>
+                                    <option>Medium</option>
+                                    <option>High</option>
+                                </select>
+                                <label asp-for="TaskItem.Priority" class="ms-2"></label>
+                                <span asp-validation-for="TaskItem.Priority" class="text-danger"></span>
+                            </div>
                         </div>
-                        <div class="form-floating py-2 col-4">
-                            <select asp-for="TaskItem.Priority" class="form-select border-0 shadow">
-                                <option>Low</option>
-                                <option>Medium</option>
-                                <option>High</option>
-                            </select>
-                            <label asp-for="TaskItem.Priority" class="ms-2"></label>
-                            <span asp-validation-for="TaskItem.Priority" class="text-danger"></span>
+                        <div class="row">
+                            <div class="form-floating py-2 col-6">
+                                <select asp-for="TaskItem.Status" class="form-select border-0 shadow">
+                                    <option value="ToDo">To Do</option>
+                                    <option value="InProgress">In Progress</option>
+                                    <option value="Done">Done</option>
+                                </select>
+                                <label asp-for="TaskItem.Status" class="ms-2"></label>
+                                <span asp-validation-for="TaskItem.Status" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating py-2 col-6">
+                                <input asp-for="TaskItem.DueDate" class="form-control shadow">
+                                <label class="ms-2">Due Date</label>
+                            </div>
                         </div>
-                        <div class="form-floating py-2 col-4">
-                            <select asp-for="TaskItem.Status" class="form-select border-0 shadow">
-                                <option value="ToDo">To Do</option>
-                                <option value="InProgress">In Progress</option>
-                                <option value="Done">Done</option>
-                            </select>
-                            <label asp-for="TaskItem.Status" class="ms-2"></label>
-                            <span asp-validation-for="TaskItem.Status" class="text-danger"></span>
-                        </div>
-                        <div class="form-floating py-2 col-4">
-                            <label>Due Date</label>
-                            <input asp-for="TaskItem.DueDate" class="form-control" >
-                        </div>
+                        
 
 
                         <div class="row pt-2">
-                            <div class="col-6 col-md-3">
+                            <div class="col-6 col-md-6">
                                 @if (Model.TaskItem.Id != 0)
                                 {
                                         <button type="submit" class="btn btn-success form-control">Update</button>
@@ -65,7 +70,7 @@
                                         <button type="submit" class="btn btn-primary form-control">Create</button>
                                 }
                             </div>
-                            <div class="col-6 col-md-3">
+                            <div class="col-6 col-md-6">
                                 <a asp-controller="Task" asp-action="Index" class="btn btn-outline-outline-primary border form-control">
                                     Back to List
                                 </a>

@@ -1,29 +1,63 @@
-﻿<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Assigned To</th>
-            <th>Priority</th>
-            <th>Due Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var task in Model)
-        {
-            <tr>
-                <td>@task.Title</td>
-                <td>@task.Status</td>
-                <td>@task.ApplicationUser.Name</td>
-                <td>@task.Priority</td>
-                <td>@task.DueDate</td>
-                <td>
-                    <a asp-area="User" asp-controller="Task" asp-action="UpdateStatus" asp-route-id="@task.Id" class="btn btn-primary mx-2">
-                        <i class="bi bi-pencil"></i> Update Status
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+﻿<div class="row pb-3">
+    @foreach (var task in Model)
+    {
+        <div class="col-lg-3 col-sm-6">
+            <div class="row p-2">
+                <div class="col-12">
+                    <div class="card border-4 p-4 box-shadow rounded">
+                        <div class="card-body pb-0">
+                            <div class="pl-1">
+                                <div class="card-title h5 text-dark opacity-75 text-uppercase text-center">@task.Title</div>
+                                @switch (task.Priority)
+                                {
+                                    case "Low":
+                                        <div class="card-title text-info text-center">Priority: @task.Priority</div>
+                                        break;
+                                    case "Medium":
+                                        <div class="card-title text-warning text-center">Priority: @task.Priority</div>
+                                        break;
+                                    case "High":
+                                        <div class="card-title text-danger text-center">Priority: @task.Priority</div>
+                                        break;
+                                    default:
+                                        <div class="card-title text-black text-center">Priority: @task.Priority</div>
+                                        break;
+                                }
+                                
+                            </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-opacity-75 text-center mb-1">
+                                    Status:
+                                    <span>
+                                        @task.Status
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-opacity-75 text-center mb-1">
+                                    Assigned to:
+                                    <span>
+                                        @task.ApplicationUser.Name
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-opacity-75 text-center mb-3">
+                                    Due Date:
+                                    <span>
+                                        @task.DueDate
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <a asp-area="User" asp-controller="Task" asp-action="UpdateStatus" asp-route-id="@task.Id" class="btn btn-primary bg-gradient border-0 form-control">
+                                <i class="bi bi-pencil"></i> Update Status
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
