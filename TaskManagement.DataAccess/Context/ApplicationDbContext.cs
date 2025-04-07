@@ -16,5 +16,6 @@ namespace TaskManagement.DataAccess.Context
 
         public DbSet<TaskItem> TaskItems { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<History> Histories { get; set; }
     }
 }

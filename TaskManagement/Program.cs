@@ -25,10 +25,7 @@ builder.Services.Configure<AppJwtSettings>(builder.Configuration.GetSection("Jwt
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllersWithViews();
-//builder.Services.AddControllers().AddFluentValidation(v =>
-//{
-//    v.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-//});
+
 builder.Services.AddScoped<IValidator<AuthJwtRegistration>, AuthJwtRegistrationValidator>();
 //builder.Services.AddValidatorsFromAssemblyContaining<AuthJwtRegistrationValidator>();
 

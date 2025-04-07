@@ -10,6 +10,7 @@ namespace TaskManagement.DataAccess.Repository.IRepository
     {
         ITaskItemRepository TaskItem { get; }
         IApplicationUserRepository ApplicationUser { get; }
+        IHistoryRepository History { get; }
         void Save();
     }
 }

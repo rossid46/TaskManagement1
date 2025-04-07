@@ -21,7 +21,11 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
         public IActionResult Index()
         {
 
-            List<TaskItem> taskList = _unitOfWork.TaskItem.GetAll(includeProperties:"Comments,ApplicationUser").ToList();
+            var taskList = _unitOfWork.TaskItem.GetAll(includeProperties: "ApplicationUser");
+            foreach (var task in taskList)
+            {
+                task.ApplicationUserId = _unitOfWork.ApplicationUser.Get(u => u.Id == task.ApplicationUserId).Email;
+            }
             return View(taskList);
         }
         public IActionResult Upsert(int? id)
@@ -104,8 +108,12 @@ namespace TaskManagement.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<TaskItem> objTaskList = _unitOfWork.TaskItem.GetAll(includeProperties: "ApplicationUser").ToList();
-            return Json(new { data = objTaskList });
+            var taskList = _unitOfWork.TaskItem.GetAll(includeProperties: "ApplicationUser");
+            foreach (var task in taskList)
+            {
+                task.ApplicationUserId = _unitOfWork.ApplicationUser.Get(u => u.Id == task.ApplicationUserId).Name;
+            }
+            return Json(new {data = taskList});
         }
 
         [HttpDelete]

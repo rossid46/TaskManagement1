@@ -4,11 +4,11 @@
 
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
-        "ajax": { "url": '/admin/task/getall' },
+        "ajax": { "url": '/admin/task/GetAll' },
         "columns": [
             { "data": "title", "width": "10%" },
             { "data": "status", "width": "10%" },
-            {"data":"priority", "width": "10%"},
+            { "data": "priority", "width": "10%"},
             { "data": "applicationUserId", "width": "15%" },
             { "data": "dueDate", "width": "15%"},
             {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
 using TaskManagement.Models.ViewModels;
@@ -19,7 +20,7 @@ namespace TaskManagement.Web.Areas.User.Controllers
         }
         public IActionResult UpdateStatus(int? id)
         {
-            if(id==0 || id==null)
+            if (id == 0 || id == null)
                 return NotFound();
 
             TaskItem taskItem = _unitOfWork.TaskItem.Get(u => u.Id == id);
@@ -33,7 +34,7 @@ namespace TaskManagement.Web.Areas.User.Controllers
                 }),
                 TaskItem = taskItem
             };
-            if (taskItemVM==null)
+            if (taskItemVM == null)
                 return NotFound();
 
             return View(taskItemVM);
@@ -43,6 +44,23 @@ namespace TaskManagement.Web.Areas.User.Controllers
         {
             if (ModelState.IsValid)
             {
+                var oldTaskItem = _unitOfWork.TaskItem.Get(t => t.Id == taskItemVM.TaskItem.Id);
+                if (oldTaskItem.Status != taskItemVM.TaskItem.Status)
+                {
+                    var claimsIdentity = (ClaimsIdentity)User.Identity;
+                    var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var history = new History()
+                    {
+                        FromStatus = oldTaskItem.Status,
+                        ToStatus = taskItemVM.TaskItem.Status,
+                        ChangeDate = DateTime.Now,
+                        ApplicationUserId = userId,
+                        TaskItemId = taskItemVM.TaskItem.Id
+                    };
+                    _unitOfWork.History.Add(history);
+                    _unitOfWork.Save();
+                }
+                ;
                 _unitOfWork.TaskItem.Update(taskItemVM.TaskItem);
                 _unitOfWork.Save();
                 TempData["success"] = "Task updated successfully";
@@ -50,5 +68,6 @@ namespace TaskManagement.Web.Areas.User.Controllers
             }
             return View(taskItemVM);
         }
+
     }
 }
