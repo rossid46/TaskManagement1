@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.DataAccess",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.Utility", "TaskManagement.Utility\TaskManagement.Utility.csproj", "{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.Api", "TaskManagement.Api\TaskManagement.Api.csproj", "{22605A6A-3105-475D-9E32-9F07F8AFEA0B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementWeb.Api", "TaskManagementWeb.Api\TaskManagementWeb.Api.csproj", "{2975F6F6-3DB3-4CE7-BAC9-6776298DD88B}"
 EndProject
 Global
@@ -37,10 +35,6 @@ Global
 		{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D948B9B3-3ACE-40F6-9DFF-DC9DC9BD764A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22605A6A-3105-475D-9E32-9F07F8AFEA0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22605A6A-3105-475D-9E32-9F07F8AFEA0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22605A6A-3105-475D-9E32-9F07F8AFEA0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22605A6A-3105-475D-9E32-9F07F8AFEA0B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2975F6F6-3DB3-4CE7-BAC9-6776298DD88B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2975F6F6-3DB3-4CE7-BAC9-6776298DD88B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2975F6F6-3DB3-4CE7-BAC9-6776298DD88B}.Release|Any CPU.ActiveCfg = Release|Any CPU
