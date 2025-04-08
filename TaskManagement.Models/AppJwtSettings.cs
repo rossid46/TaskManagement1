@@ -1,4 +1,4 @@
-﻿namespace TaskManagementWeb.Api.Models
+﻿namespace TaskManagement.Models
 {
     public class AppJwtSettings
     {

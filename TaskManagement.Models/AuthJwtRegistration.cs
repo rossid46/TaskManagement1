@@ -2,7 +2,7 @@
 
 using FluentValidation;
 
-namespace TaskManagementWeb.Api.Models
+namespace TaskManagement.Models
 {
     public class AuthJwtRegistration
     {
