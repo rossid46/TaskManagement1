@@ -22,14 +22,17 @@ namespace TaskManagementWeb.Api.Controllers
         }
 
         // GET: api/Task
-        [HttpGet]
+        [HttpGet("GetAll")]
+        [ProducesResponseType(typeof(IEnumerable<TaskItem>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTaskItems()
         {
             return await _context.TaskItems.ToListAsync();
         }
 
         // GET: api/Task/5
-        [HttpGet("{id}")]
+        [HttpGet("Get/{id}")]
+        [ProducesResponseType(typeof(TaskItem), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<TaskItem>> GetTaskItem(int id)
         {
             var taskItem = await _context.TaskItems.FindAsync(id);
@@ -44,7 +47,11 @@ namespace TaskManagementWeb.Api.Controllers
 
         // PUT: api/Task/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
+        [ProducesResponseType(typeof(TaskItem), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(TaskItem), StatusCodes.Status200OK)]
         public async Task<IActionResult> PutTaskItem(int id, TaskItem taskItem)
         {
             if (id != taskItem.Id)
@@ -75,7 +82,8 @@ namespace TaskManagementWeb.Api.Controllers
 
         // POST: api/Task
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
+        [ProducesResponseType(typeof(TaskItem), StatusCodes.Status201Created)]
         public async Task<ActionResult<TaskItem>> PostTaskItem(TaskItem taskItem)
         {
             _context.TaskItems.Add(taskItem);
@@ -86,7 +94,9 @@ namespace TaskManagementWeb.Api.Controllers
         }
 
         // DELETE: api/Task/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTaskItem(int id)
         {
             var taskItem = await _context.TaskItems.FindAsync(id);
