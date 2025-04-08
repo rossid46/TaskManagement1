@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using TaskManagement.Api.Models;
-using TaskManagement.Api.Settings;
 using TaskManagement.DataAccess.Context;
 using TaskManagement.DataAccess.DbInitializer;
 using TaskManagement.DataAccess.Repository;
@@ -107,7 +105,6 @@ if (!app.Environment.IsDevelopment())
 //    app.UseDeveloperExceptionPage();
 //}
 
-app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

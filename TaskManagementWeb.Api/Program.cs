@@ -10,6 +10,7 @@ using TaskManagement.DataAccess.DbInitializer;
 using TaskManagement.DataAccess.Repository;
 using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
+using TaskManagementWeb.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -42,6 +43,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkSto
 builder.Services.AddScoped<IValidator<AuthJwtRegistration>, AuthJwtRegistrationValidator>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddTransient<GlobalErrorHandlerMiddleware>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -60,6 +62,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<GlobalErrorHandlerMiddleware>();
+
 
 app.MapControllers();
 
