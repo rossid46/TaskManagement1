@@ -14,7 +14,7 @@ using TaskManagement.DataAccess.Repository;
 using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Utility;
 using System.Reflection;
-using TaskManagement.Api.Middleware;
+using TaskManagement.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +40,6 @@ builder.Services.AddSession(options =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddTransient<ExceptionMiddleware>();
 builder.Services.AddLogging();
 
 builder.Services.AddAuthentication(options =>

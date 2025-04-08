@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
+using TaskManagement.Utility;
 
 
 [Route("api")]
@@ -17,7 +20,8 @@ public class ApiAuthJwtController : ControllerBase
     private readonly string JWT_ISSUER;
     private readonly string JWT_AUDIENCE;
     private readonly byte[] JWT_SECRET_KEY;
-    
+
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IValidator<AuthJwtRegistration> _validator;
     private readonly ILogger<ApiAuthJwtController> _logger;
     private readonly UserManager<IdentityUser> _userManager;
@@ -26,11 +30,13 @@ public class ApiAuthJwtController : ControllerBase
     private const int JWT_EXPIRATION_MINUTES = 15;
 
     public ApiAuthJwtController(
+        IUnitOfWork unitOfWork,
         IOptions<AppJwtSettings> settings,
         IValidator<AuthJwtRegistration> validator,
         ILogger<ApiAuthJwtController> logger,
         UserManager<IdentityUser> userManager) : base()
     {
+        _unitOfWork = unitOfWork;
         JWT_ISSUER = settings.Value.Issuer;
         JWT_AUDIENCE = settings.Value.Audience;
         JWT_SECRET_KEY = Encoding.UTF8.GetBytes(settings.Value.SecretKey);
@@ -39,8 +45,7 @@ public class ApiAuthJwtController : ControllerBase
         _userManager = userManager;
     }
 
-    [Route("auth")]
-    [HttpPost]
+    [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> AuthPost(
         [FromBody] AuthJwtRegistration userAuth)
@@ -81,5 +86,50 @@ public class ApiAuthJwtController : ControllerBase
 
         string tokenString = handler.WriteToken(token);
         return Ok(tokenString);
+    }
+
+    [HttpPost("register")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<IdentityError>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RegisterPost(
+    [FromBody] AuthJwtRegistration request)
+    {
+        var result = _validator.Validate(request);
+
+        if (!result.IsValid)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        string normalizedEmail = _userManager.NormalizeEmail(request.User);
+        ApplicationUser? appUser = _unitOfWork.ApplicationUser.Get(u => u.NormalizedEmail == normalizedEmail);
+
+        if (appUser != null)
+        {
+            // alert that the user already exists.
+            _logger.LogTrace($"Attempted to register an existing user. (user = {request.User})");
+
+            return Conflict("another account is already registered by that email. sorry.");
+        }
+
+        appUser = new ApplicationUser()
+        {
+            Name = request.User!,
+        };
+
+        await _userManager.SetUserNameAsync(appUser, request.User!);
+        await _userManager.SetEmailAsync(appUser, request.User!);
+        IdentityResult resultCreate = await _userManager.CreateAsync(appUser, request.Password!);
+
+        if (!resultCreate.Succeeded)
+        {
+            return BadRequest(resultCreate.Errors);
+        }
+
+        await _userManager.AddToRoleAsync(appUser, SD.Role_User);
+        _logger.LogTrace($"Add user. (user = {appUser.Email}, role = {SD.Role_User})");
+
+        return Ok();
     }
 }

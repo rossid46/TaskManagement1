@@ -6,6 +6,9 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
 using TaskManagement.DataAccess.Context;
+using TaskManagement.DataAccess.DbInitializer;
+using TaskManagement.DataAccess.Repository;
+using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,8 +38,10 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true
     };
 });
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();// Add services to the container.
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();// Add services to the container.
 builder.Services.AddScoped<IValidator<AuthJwtRegistration>, AuthJwtRegistrationValidator>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
