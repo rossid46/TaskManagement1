@@ -59,7 +59,8 @@ public class ApiAuthJwtController : ControllerBase
         var user = await _userManager.FindByEmailAsync(userAuth.User);
         if (!await _userManager.CheckPasswordAsync(user, userAuth.Password))
         {
-            return Unauthorized("Wrong credentials!");
+            _logger.LogError("Wrong credentials.");
+            return Unauthorized();
         }
         DateTime expiration = DateTime.Now.AddMinutes(JWT_EXPIRATION_MINUTES);
 

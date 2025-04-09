@@ -52,7 +52,17 @@ builder.Services.AddTransient<GlobalErrorHandlerMiddleware>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Task Management API",
+        Version = "v1",
+        Description = "API for Task Management System"
+    });
+    //c.UseOpenApiVersion("3.0.1");
+    c.CustomSchemaIds(type => type.ToString());
+});
 
 var app = builder.Build();
 
@@ -60,13 +70,21 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+    //app.UseSwaggerUI(c =>
+    //{
+    //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Management API v1");
+    //    c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+    //});
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+
 app.UseSerilogRequestLogging();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseMiddleware<GlobalErrorHandlerMiddleware>();
 
 
