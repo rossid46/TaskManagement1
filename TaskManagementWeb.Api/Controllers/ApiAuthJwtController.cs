@@ -61,7 +61,7 @@ public class ApiAuthJwtController : ControllerBase
         {
             return Unauthorized("Wrong credentials!");
         }
-        DateTime expiration = DateTime.UtcNow.AddMinutes(JWT_EXPIRATION_MINUTES);
+        DateTime expiration = DateTime.Now.AddMinutes(JWT_EXPIRATION_MINUTES);
 
         var descriptor = new SecurityTokenDescriptor()
         {
@@ -82,7 +82,7 @@ public class ApiAuthJwtController : ControllerBase
         var handler = new JwtSecurityTokenHandler();
         SecurityToken token = handler.CreateToken(descriptor);
 
-        _logger.LogTrace($"Created new JWT token. (expiration = {expiration:G})");
+        _logger.LogInformation($"Created new JWT token. (expiration = {expiration:G})");
 
         string tokenString = handler.WriteToken(token);
         return Ok(tokenString);
@@ -108,7 +108,7 @@ public class ApiAuthJwtController : ControllerBase
         if (appUser != null)
         {
             // alert that the user already exists.
-            _logger.LogTrace($"Attempted to register an existing user. (user = {request.User})");
+            _logger.LogInformation($"Attempted to register an existing user. (user = {request.User})");
 
             return Conflict("another account is already registered by that email. sorry.");
         }
@@ -128,7 +128,7 @@ public class ApiAuthJwtController : ControllerBase
         }
 
         await _userManager.AddToRoleAsync(appUser, SD.Role_User);
-        _logger.LogTrace($"Add user. (user = {appUser.Email}, role = {SD.Role_User})");
+        _logger.LogInformation($"Add user. (user = {appUser.Email}, role = {SD.Role_User})");
 
         return Ok();
     }
