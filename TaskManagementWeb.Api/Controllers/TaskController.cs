@@ -1,119 +1,134 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TaskManagement.DataAccess.Context;
+using System.Security.Claims;
+using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
+using TaskManagement.Models.ViewModels;
+using TaskManagement.Utility;
 
 namespace TaskManagementWeb.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TaskController : ControllerBase
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class TaskController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IValidator _validator;
+        private readonly ILogger<TaskController> _logger;
 
-        public TaskController(ApplicationDbContext context)
+        public TaskController(IUnitOfWork unitOfWork, IValidator validator, ILogger<TaskController> logger)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _validator = validator;
+            _logger = logger;
         }
 
-        // GET: api/Task
         [HttpGet("GetAll")]
         [ProducesResponseType(typeof(IEnumerable<TaskItem>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTaskItems()
+        public IActionResult GetAll()
         {
-            return await _context.TaskItems.ToListAsync();
+            var taskItems = _unitOfWork.TaskItem.GetAll(includeProperties: "ApplicationUser");
+            return Ok(taskItems);
         }
 
-        // GET: api/Task/5
         [HttpGet("Get/{id}")]
         [ProducesResponseType(typeof(TaskItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TaskItem>> GetTaskItem(int id)
+        public IActionResult Get(int id)
         {
-            var taskItem = await _context.TaskItems.FindAsync(id);
-
+            var taskItem = _unitOfWork.TaskItem.Get(x => x.Id == id, includeProperties: "ApplicationUser");
             if (taskItem == null)
             {
                 return NotFound();
             }
-
-            return taskItem;
+            return Ok(taskItem);
         }
 
-        // PUT: api/Task/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("Update/{id}")]
-        [ProducesResponseType(typeof(TaskItem), StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("Upsert/{id}")]
         [ProducesResponseType(typeof(TaskItem), StatusCodes.Status200OK)]
-        public async Task<IActionResult> PutTaskItem(int id, TaskItem taskItem)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Upsert(int id, [FromBody] TaskItemVM taskItemVM)
         {
-            if (id != taskItem.Id)
+            var resultValidation = await _validator.ValidateAsync((IValidationContext)taskItemVM);
+            if (!resultValidation.IsValid)
             {
-                return BadRequest();
-            }
-
-            _context.Entry(taskItem).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TaskItemExists(id))
+                resultValidation.AddToModelState(ModelState);
+                var errors = new List<string>();
+                foreach (var error in resultValidation.Errors)
                 {
-                    return NotFound();
+                    errors.Add(error.ErrorMessage);
                 }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(errors);
             }
+            if (taskItemVM.TaskItem.Id == 0)
+            {
+                _unitOfWork.TaskItem.Add(taskItemVM.TaskItem);
+                _unitOfWork.Save();
+                _logger.LogInformation("TaskItem created successfully.");
+                return Ok(taskItemVM.TaskItem);
+            }
+            else
+            {
+                var oldTaskItem = _unitOfWork.TaskItem.Get(x => x.Id == taskItemVM.TaskItem.Id);
+                if (oldTaskItem.Status != taskItemVM.TaskItem.Status)
+                {
+                    var claimsIdentity = (ClaimsIdentity)User.Identity;
+                    var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    History history = new History
+                    {
+                        FromStatus = oldTaskItem.Status,
+                        ToStatus = taskItemVM.TaskItem.Status,
+                        ChangeDate = DateTime.Now,
+                        ApplicationUserId = userId,
+                        TaskItemId = taskItemVM.TaskItem.Id
+                    };
+                    _unitOfWork.History.Add(history);
+                    _unitOfWork.Save();
+                }
+                _unitOfWork.TaskItem.Update(taskItemVM.TaskItem);
+                _unitOfWork.Save();
+                TempData["success"] = "Task updated successfully";
 
-            return NoContent();
+                if (oldTaskItem.ApplicationUserId != null)
+                {
+                    oldTaskItem.ApplicationUserId = taskItemVM.TaskItem.ApplicationUserId;
+                }
+                oldTaskItem.Description = taskItemVM.TaskItem.Description;
+                oldTaskItem.DueDate = taskItemVM.TaskItem.DueDate;
+
+                _unitOfWork.TaskItem.Update(oldTaskItem);
+                _unitOfWork.Save();
+                _logger.LogInformation("TaskItem updated successfully");
+                return Ok(oldTaskItem);
+            }
         }
 
-        // POST: api/Task
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("Add")]
-        [ProducesResponseType(typeof(TaskItem), StatusCodes.Status201Created)]
-        public async Task<ActionResult<TaskItem>> PostTaskItem(TaskItem taskItem)
-        {
-            _context.TaskItems.Add(taskItem);
-            await _context.SaveChangesAsync();
-
-            //return CreatedAtAction("GetTaskItem", new { id = taskItem.Id }, taskItem);
-            return CreatedAtAction(nameof(GetTaskItem), new { id = taskItem.Id }, taskItem);
-        }
-
-        // DELETE: api/Task/5
         [HttpDelete("Delete/{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteTaskItem(int id)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult Delete(int id)
         {
-            var taskItem = await _context.TaskItems.FindAsync(id);
-            if (taskItem == null)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
+            if (User.IsInRole(SD.Role_User))
+            {
+                return Unauthorized();
+            }
+            if (_unitOfWork.TaskItem.Get(x => x.Id == id) == null)
             {
                 return NotFound();
             }
-
-            _context.TaskItems.Remove(taskItem);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            var taskItem = _unitOfWork.TaskItem.Get(x => x.Id == id);
+            _unitOfWork.TaskItem.Remove(taskItem);
+            _unitOfWork.Save();
+            _logger.LogInformation("Task deleted successfully");
+            return Ok(new { message = "Task deleted successfully" });
         }
 
-        private bool TaskItemExists(int id)
-        {
-            return _context.TaskItems.Any(e => e.Id == id);
-        }
     }
 }

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using System;
 using System.Text;
 using TaskManagement.DataAccess.Context;
 using TaskManagement.DataAccess.DbInitializer;
