@@ -1,4 +1,3 @@
-using FluentValidation.AspNetCore;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -8,11 +7,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TaskManagement.DataAccess.Context;
 using TaskManagement.DataAccess.DbInitializer;
+using TaskManagement.DataAccess.Interfaces;
 using TaskManagement.DataAccess.Repository;
-using TaskManagement.DataAccess.Repository.IRepository;
-using TaskManagement.Utility;
-using System.Reflection;
 using TaskManagement.Models;
+using TaskManagement.Services.Services;
+using TaskManagement.Services.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 

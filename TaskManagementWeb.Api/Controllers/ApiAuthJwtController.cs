@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TaskManagement.DataAccess.Repository.IRepository;
+using TaskManagement.DataAccess.Interfaces;
 using TaskManagement.Models;
 using TaskManagement.Utility;
 

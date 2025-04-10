@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TaskManagement.Models\TaskManagement.Models.csproj" />
-    <ProjectReference Include="..\TaskManagement.Utility\TaskManagement.Utility.csproj" />
+    <ProjectReference Include="..\TaskManagement.Utility\TaskManagement.Common.csproj" />
   </ItemGroup>
 
 </Project>

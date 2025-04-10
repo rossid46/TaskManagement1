@@ -3,14 +3,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 using TaskManagement.DataAccess.Context;
 using TaskManagement.DataAccess.DbInitializer;
+using TaskManagement.DataAccess.Interfaces;
 using TaskManagement.DataAccess.Repository;
-using TaskManagement.DataAccess.Repository.IRepository;
 using TaskManagement.Models;
-using TaskManagementWeb.Api.Middlewares;
+using TaskManagement.Services.Middlewares;
+using TaskManagement.Services.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -51,17 +53,47 @@ builder.Services.AddTransient<GlobalErrorHandlerMiddleware>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+
+//SWAGGER
+builder.Services.AddSwaggerGen(option =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Title = "Task Management API",
-        Version = "v1",
-        Description = "API for Task Management System"
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
     });
-    //c.UseOpenApiVersion("3.0.1");
-    c.CustomSchemaIds(type => type.ToString());
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{ }
+        }
+    });
 });
+//builder.Services.AddSwaggerGen(c =>
+//{
+//    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+//    {
+//        Title = "Task Management API",
+//        Version = "v1",
+//        Description = "API for Task Management System"
+//    });
+//    //c.UseOpenApiVersion("3.0.1");
+//    c.CustomSchemaIds(type => type.ToString());
+//});
+
 
 var app = builder.Build();
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskManagement.DataAccess.Repository.IRepository
+namespace TaskManagement.DataAccess.Interfaces
 {
     public interface IUnitOfWork 
     {

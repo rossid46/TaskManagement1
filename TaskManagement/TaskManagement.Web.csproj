@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TaskManagement.DataAccess\TaskManagement.DataAccess.csproj" />
+    <ProjectReference Include="..\TaskManagement.Services\TaskManagement.Services.csproj" />
   </ItemGroup>
 
 </Project>

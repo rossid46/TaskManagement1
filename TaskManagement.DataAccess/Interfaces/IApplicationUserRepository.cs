@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskManagement.Models;
 
-namespace TaskManagement.DataAccess.Repository.IRepository
+namespace TaskManagement.DataAccess.Interfaces
 {
-    public interface IApplicationUserRepository : IRepository<ApplicationUser>
+    public interface IApplicationUserRepository : Interfaces<ApplicationUser>
     {
         void Update(ApplicationUser applicationUser);
     }

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using TaskManagement.DataAccess.Repository.IRepository;
+using TaskManagement.DataAccess.Interfaces;
 using TaskManagement.Models;
 using TaskManagement.Models.ViewModels;
 

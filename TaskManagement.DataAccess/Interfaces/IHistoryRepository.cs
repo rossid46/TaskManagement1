@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskManagement.Models;
 
-namespace TaskManagement.DataAccess.Repository.IRepository
+namespace TaskManagement.DataAccess.Interfaces
 {
-    public interface ITaskItemRepository : IRepository<TaskItem>
+    public interface IHistoryRepository : Interfaces<History>
     {
     }
 }

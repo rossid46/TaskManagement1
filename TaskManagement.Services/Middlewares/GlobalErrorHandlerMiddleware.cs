@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Net.Mime;
 using System.Text.Json;
 
-namespace TaskManagementWeb.Api.Middlewares
+namespace TaskManagement.Services.Middlewares
 {
         public class GlobalErrorHandlerMiddleware : IMiddleware
         {

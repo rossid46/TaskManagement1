@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TaskManagement.DataAccess.Repository.IRepository;
+using TaskManagement.DataAccess.Interfaces;
 using TaskManagement.Models;
 using TaskManagement.Models.ViewModels;
 using TaskManagement.Utility;

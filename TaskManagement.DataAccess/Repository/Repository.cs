@@ -6,11 +6,11 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using TaskManagement.DataAccess.Context;
-using TaskManagement.DataAccess.Repository.IRepository;
+using TaskManagement.DataAccess.Interfaces;
 
 namespace TaskManagement.DataAccess.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : Interfaces<T> where T : class
     {
         private readonly ApplicationDbContext _db;
         internal DbSet<T> dbSet;
