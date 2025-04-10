@@ -17,14 +17,14 @@ namespace TaskManagementWeb.Api.Controllers
     public class TaskController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IValidator _validator;
+        private readonly IValidator<TaskItemVM> _validator;
         private readonly ILogger<TaskController> _logger;
 
-        public TaskController(IUnitOfWork unitOfWork, IValidator validator, ILogger<TaskController> logger)
+        public TaskController(IUnitOfWork unitOfWork, ILogger<TaskController> logger, IValidator<TaskItemVM> validator)
         {
             _unitOfWork = unitOfWork;
-            _validator = validator;
             _logger = logger;
+            _validator = validator;
         }
 
         [HttpGet("GetAll")]
@@ -53,7 +53,7 @@ namespace TaskManagementWeb.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Upsert(int id, [FromBody] TaskItemVM taskItemVM)
         {
-            var resultValidation = await _validator.ValidateAsync((IValidationContext)taskItemVM);
+            var resultValidation = await _validator.ValidateAsync(taskItemVM);
             if (!resultValidation.IsValid)
             {
                 resultValidation.AddToModelState(ModelState);
