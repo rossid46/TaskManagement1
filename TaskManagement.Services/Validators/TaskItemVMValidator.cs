@@ -13,7 +13,7 @@ public class TaskItemVMValidator : AbstractValidator<TaskItemVM>
         // Validazione per il campo Status
         RuleFor(x => x.TaskItem.Status)
             .NotEmpty().WithMessage("The Status field is required.")
-            .Must(status => new[] { "Pending", "In Progress", "Completed" }.Contains(status))
+            .Must(status => new[] { "ToDo", "InProgress", "Completed" }.Contains(status))
             .WithMessage("The Status field must be one of the following: Pending, In Progress, Completed.");
 
         // Validazione per il campo Priority
@@ -26,13 +26,5 @@ public class TaskItemVMValidator : AbstractValidator<TaskItemVM>
         RuleFor(x => x.TaskItem.DueDate)
             .GreaterThanOrEqualTo(DateTime.Now).WithMessage("The Due Date must be in the future.");
 
-        // Validazione per il campo Description
-        RuleFor(x => x.TaskItem.Description)
-            .NotEmpty().WithMessage("The Description field is required.")
-            .MaximumLength(500).WithMessage("The Description field must not exceed 500 characters.");
-
-        // Validazione per il campo ApplicationUserId
-        RuleFor(x => x.TaskItem.ApplicationUserId)
-            .NotEmpty().WithMessage("The Application User field is required.");
     }
 }

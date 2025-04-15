@@ -11,6 +11,7 @@ using TaskManagement.DataAccess.DbInitializer;
 using TaskManagement.DataAccess.Interfaces;
 using TaskManagement.DataAccess.Repository;
 using TaskManagement.Models;
+using TaskManagement.Models.ViewModels;
 using TaskManagement.Services.Middlewares;
 using TaskManagement.Services.Validators;
 
@@ -47,7 +48,11 @@ builder.Host.UseSerilog((context, configuration) =>
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();// Add services to the container.
 builder.Services.AddScoped<IValidator<AuthJwtRegistration>, AuthJwtRegistrationValidator>();
+builder.Services.AddScoped<IValidator<TaskItemVM>, TaskItemVMValidator>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
+builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddTransient<GlobalErrorHandlerMiddleware>();
 builder.Services.AddControllers();

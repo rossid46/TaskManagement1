@@ -17,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\TaskManagement.DataAccess\TaskManagement.DataAccess.csproj" />
 	  <ProjectReference Include="..\TaskManagement.Models\TaskManagement.Models.csproj" />
 	</ItemGroup>
 

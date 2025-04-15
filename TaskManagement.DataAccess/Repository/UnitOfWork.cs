@@ -15,12 +15,12 @@ namespace TaskManagement.DataAccess.Repository
         public IApplicationUserRepository ApplicationUser { get; private set; }
         public IHistoryRepository History { get; private set; }
 
-        public UnitOfWork(ApplicationDbContext db)
+        public UnitOfWork(ApplicationDbContext db, ITaskItemRepository taskItemRepository, IApplicationUserRepository applicationUserRepository, IHistoryRepository historyRepository)
         {
             _db = db;
-            TaskItem = new TaskItemRepository(_db);
-            ApplicationUser = new ApplicationUserRepository(_db);
-            History = new HistoryRepository(_db);
+            TaskItem = taskItemRepository;
+            ApplicationUser = applicationUserRepository;
+            History = historyRepository;
         }
 
         public void Save()
