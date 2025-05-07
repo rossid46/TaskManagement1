@@ -153,12 +153,10 @@ public class TaskControllerTests
         _mockUnitOfWork.Setup(u => u.TaskItem.Get(It.IsAny<Expression<Func<TaskItem, bool>>>(), It.IsAny<string>(), It.IsAny<bool>()))
             .Returns(taskItem);
         _mockTaskService.Setup(s => s.DeleteTask(1, It.IsAny<ClaimsPrincipal>())).Returns(true);
-
         // Act
         var result = _controller.Delete(1);
         // Assert
         var okResult = Assert.IsType<OkResult>(result);
         Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
-
     }
 }

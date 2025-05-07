@@ -16,16 +16,11 @@ namespace TaskManagementWeb.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class TaskController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IValidator<TaskItemVM> _validator;
-        private readonly ILogger<TaskController> _logger;
+        
         private readonly ITaskService _taskService;
 
-        public TaskController(IUnitOfWork unitOfWork, IValidator<TaskItemVM> validator, ILogger<TaskController> logger, ITaskService taskService)
+        public TaskController(ITaskService taskService)
         {
-            _unitOfWork = unitOfWork;
-            _validator = validator;
-            _logger = logger;
             _taskService = taskService;
         }
 
